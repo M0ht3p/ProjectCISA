@@ -23,7 +23,7 @@ Make sure you have Python 3.8+ installed on your system.
 ### 2. Clone the Repository
 
 ```bash
-git clone [https://github.com/YOUR_USERNAME/Project-CISA.git](https://github.com/YOUR_USERNAME/Project-CISA.git)
+git clone [https://github.com/M0ht3p/Project-CISA.git](https://github.com/M0ht3p/Project-CISA.git)
 cd Project-CISA
 ```
 ### 3. Install dependencies
