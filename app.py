@@ -1,19 +1,19 @@
-import io
-import exifread
-import folium
 import streamlit as st
-from PIL import Image, ImageOps
+import exifread
+from PIL import Image, ExifTags
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut, GeocoderServiceError
+import folium
 from streamlit_folium import st_folium
+import io
 
 st.set_page_config(
-    page_title="Photo GPS & EXIF Extractor",
+    page_title="Project CISA",
     page_icon="📸",
     layout="wide"
 )
 
-st.title("📸 Photo EXIF & GPS Map Viewer")
+st.title("📸 Project CISA")
 st.markdown(
     "Upload one or more photos (JPEG/TIFF) containing GPS EXIF metadata. "
     "The app will extract location coordinates, perform reverse-geocoding, and map the photos!"
@@ -21,7 +21,7 @@ st.markdown(
 
 @st.cache_resource
 def get_geocoder():
-    return Nominatim(user_agent="streamlit_photo_exif_map_app")
+    return Nominatim(user_agent="project_cisa_streamlit_app")
 
 geolocator = get_geocoder()
 
@@ -55,11 +55,11 @@ def extract_exif_data(file_bytes):
 
     if gps_latitude and gps_latitude_ref and gps_longitude and gps_longitude_ref:
         lat = convert_to_degrees(gps_latitude)
-        if 'S' in str(gps_latitude_ref.values).upper():
+        if gps_latitude_ref.values[0] != 'N':
             lat = -lat
 
         lon = convert_to_degrees(gps_longitude)
-        if 'W' in str(gps_longitude_ref.values).upper():
+        if gps_longitude_ref.values[0] != 'E':
             lon = -lon
 
         metadata["Latitude"] = lat
@@ -71,7 +71,7 @@ def extract_exif_data(file_bytes):
 @st.cache_data(show_spinner=False)
 def reverse_geocode(lat, lon):
     try:
-        location = geolocator.reverse((lat, lon), exactly_one=True, language="en", timeout=5)
+        location = geolocator.reverse((lat, lon), exactly_one=True, language="en")
         if location:
             return location.address
     except (GeocoderTimedOut, GeocoderServiceError):
@@ -94,12 +94,10 @@ if uploaded_files:
         metadata = extract_exif_data(file_bytes)
         
         file_bytes.seek(0)
-        img = Image.open(file_bytes)
-        img = ImageOps.exif_transpose(img)
         
         record = {
             "filename": file.name,
-            "image": img,
+            "bytes": file_bytes,
             "metadata": metadata,
             "address": "N/A"
         }
@@ -155,7 +153,7 @@ if uploaded_files:
     cols = st.columns(2)
     for idx, r in enumerate(extracted_records):
         with cols[idx % 2]:
-            st.image(r["image"], caption=r["filename"], use_container_width=True)
+            st.image(r["bytes"], caption=r["filename"], use_container_width=True)
             meta = r["metadata"]
             
             with st.expander(f"Metadata for {r['filename']}", expanded=True):
