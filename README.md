@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22816158.svg)](https://doi.org/10.5281/zenodo.22816158)
+
 # 📸 Project CISA (Coordinate Image Search API)
 
 An interactive [Streamlit](https://streamlit.io/) web application that extracts embedded EXIF metadata from uploaded JPEG and TIFF photos, performs reverse-geocoding using OpenStreetMap's Nominatim API, and renders interactive map markers alongside full camera shot details.
