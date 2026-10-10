@@ -9,11 +9,98 @@ import io
 
 st.set_page_config(
     page_title="Project CISA",
-    page_icon="📸",
+    page_icon="❄️",
     layout="wide"
 )
 
-st.title("📸 Project CISA")
+st.markdown("""
+<style>
+    /* Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    html, body, [class*="css"]  {
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Arrière-plan global givré sombre */
+    .stApp {
+        background: linear-gradient(135deg, #0b1325 0%, #101c33 50%, #0d172a 100%);
+        color: #e2e8f0;
+    }
+
+    /* Barre latérale (Sidebar) style glacier */
+    [data-testid="stSidebar"] {
+        background: rgba(15, 23, 42, 0.75) !important;
+        backdrop-filter: blur(12px);
+        border-right: 1px solid rgba(186, 230, 253, 0.15);
+    }
+
+    /* Titres et en-têtes avec effet glacé */
+    h1, h2, h3, h4, h5, h6 {
+        color: #f0f9ff !important;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+
+    h1 {
+        background: linear-gradient(90deg, #e0f2fe, #38bdf8, #7dd3fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+    }
+
+    /* Cartes d'information & Conteneurs (Glassmorphism) */
+    [data-testid="stExpander"], div[role="alert"] {
+        background: rgba(30, 41, 59, 0.5) !important;
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(186, 230, 253, 0.12) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Code & Coordinates (Monospace Frost) */
+    code {
+        font-family: 'JetBrains Mono', monospace !important;
+        color: #38bdf8 !important;
+        background-color: rgba(15, 23, 42, 0.8) !important;
+        border: 1px solid rgba(56, 189, 248, 0.3) !important;
+        border-radius: 6px !important;
+        padding: 2px 6px !important;
+    }
+
+    /* Modificateurs pour la zone d'upload */
+    [data-testid="stFileUploadDropzone"] {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border: 2px dashed rgba(56, 189, 248, 0.4) !important;
+        border-radius: 12px !important;
+    }
+
+    [data-testid="stFileUploadDropzone"]:hover {
+        border-color: #7dd3fc !important;
+        box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+
+    /* Custom Scrollbar glacée */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #0b1325;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #1e293b;
+        border-radius: 4px;
+        border: 1px solid rgba(186, 230, 253, 0.2);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #38bdf8;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+
+st.title("❄️ Project CISA")
 st.markdown(
     "Upload one or more photos (JPEG/TIFF) containing GPS EXIF metadata. "
     "The app will extract location coordinates, perform reverse-geocoding, and map the photos!"
@@ -79,7 +166,7 @@ def reverse_geocode(lat, lon):
     return "Address not found"
 
 
-st.sidebar.header("Upload Photos")
+st.sidebar.header("❄️ Upload Photos")
 uploaded_files = st.sidebar.file_uploader(
     "Choose photo files (JPG / JPEG / TIFF)",
     type=["jpg", "jpeg", "tiff"],
@@ -113,12 +200,12 @@ if uploaded_files:
     st.sidebar.success(f"Processed {len(uploaded_files)} file(s). Found GPS in {len(gps_records)} file(s).")
 
     if gps_records:
-        st.subheader("🗺️ Map View")
+        st.subheader("🗺️ Frost Map View")
 
         avg_lat = sum(r["metadata"]["Latitude"] for r in gps_records) / len(gps_records)
         avg_lon = sum(r["metadata"]["Longitude"] for r in gps_records) / len(gps_records)
 
-        m = folium.Map(location=[avg_lat, avg_lon], zoom_start=11)
+        m = folium.Map(location=[avg_lat, avg_lon], zoom_start=11, tiles="CartoDB dark_matter")
 
         for r in gps_records:
             lat = r["metadata"]["Latitude"]
@@ -126,12 +213,12 @@ if uploaded_files:
             meta = r["metadata"]
 
             popup_html = f"""
-            <div style="font-family: sans-serif; width: 220px;">
-                <h4><b>{r['filename']}</b></h4>
-                <p><b>Date:</b> {meta['Date Time']}</p>
-                <p><b>Camera:</b> {meta['Make']} {meta['Model']}</p>
-                <p><b>Address:</b> {r['address']}</p>
-                <p><b>Coordinates:</b> {lat:.5f}, {lon:.5f}</p>
+            <div style="font-family: sans-serif; width: 220px; color: #0f172a;">
+                <h4 style="margin-bottom: 5px; color: #0284c7;"><b>{r['filename']}</b></h4>
+                <p style="margin: 3px 0;"><b>Date:</b> {meta['Date Time']}</p>
+                <p style="margin: 3px 0;"><b>Camera:</b> {meta['Make']} {meta['Model']}</p>
+                <p style="margin: 3px 0;"><b>Address:</b> {r['address']}</p>
+                <p style="margin: 3px 0;"><b>Coordinates:</b> {lat:.5f}, {lon:.5f}</p>
             </div>
             """
 
@@ -139,7 +226,7 @@ if uploaded_files:
                 location=[lat, lon],
                 popup=folium.Popup(popup_html, max_width=300),
                 tooltip=r["filename"],
-                icon=folium.Icon(color="red", icon="camera", prefix="fa")
+                icon=folium.Icon(color="iceblue" if "iceblue" in folium.Icon.color_options else "blue", icon="snowflake", prefix="fa")
             ).add_to(m)
 
         st_folium(m, width="100%", height=500)
