@@ -38,4 +38,4 @@ streamlit run app.py
 ```
 
 📄 License : 
-This project is licensed under the Apache 2.0 License ; see LICENSE file for more information.
+This project is licensed under the BSD-3 Clause License ; see LICENSE file for more information.
